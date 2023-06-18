@@ -11,7 +11,7 @@ interface HiddenInputProps {
   setIdle: React.Dispatch<React.SetStateAction<boolean>>;
   fetching: boolean;
   asciiMode: boolean;
-  ascii: string;
+  asciiArt: string;
 }
 
 const HiddenInput = (props: HiddenInputProps) => {
@@ -25,7 +25,7 @@ const HiddenInput = (props: HiddenInputProps) => {
     setIdle,
     fetching,
     asciiMode,
-    ascii,
+    asciiArt,
   } = props;
 
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
@@ -132,9 +132,11 @@ const HiddenInput = (props: HiddenInputProps) => {
     }
     if (asciiMode) {
       return (
+        <>
         <pre>
-             {ascii}                                              
+             {asciiArt}                                              
         </pre>
+        </>
       );
     } else {
       return inputArray.map((item, key) => (

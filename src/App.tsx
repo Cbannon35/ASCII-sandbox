@@ -91,7 +91,7 @@ const App = () => {
   const [submit, setSubmit] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isInputArrayEmpty()) return;
+    if (isInputArrayEmpty() || !submit) return;
     setFetching(true);
     const fetchAsciiArt = async () => {
       // fetch("	https://api.openai.com/v1/chat/completions", {
@@ -137,21 +137,25 @@ const App = () => {
         const response = await fetch(local_url, requestOptions);
         const output = await response.json().then((data) => data.response);
         console.log("output", output);
+        setAsciiMode(true);
+        setFetching(false);
+        setSubmit(false);
+        setAsciiArt(output);
         return output;
+      
       } catch (error) {
         console.log("error:", error);
         return null;
       }
     };
     fetchAsciiArt();
-    setAsciiMode(true);
-    setFetching(false);
-    setSubmit(false);
+    
   }, [submit]);
 
   /* if user changes input, reset fetched */
   useEffect(() => {
     if (isInputArrayEmpty()) return;
+    setAsciiArt("");
     setAsciiMode(false);
     console.log("user typed");
   }, [inputArray]);
