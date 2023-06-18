@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from llm import get_ascii
 app = FastAPI()
 
 app.add_middleware(
@@ -18,6 +18,12 @@ app.add_middleware(
 #     response.headers["Access-Control-Allow-Headers"] = "*"
 #     return response
 
+
+
 @app.post("/")
-def read_root():
-    return {"Hello": "World"}
+def read_root(query: str):
+    query = "Turn the following text into ASCII art:\n" + query + "\n"
+    print(query)
+    res = get_ascii(query)
+    print(res)
+    return {'response':res}

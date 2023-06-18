@@ -8,6 +8,37 @@ import HiddenInput from "./HiddenInput";
 import { ImpulseSpinner } from "react-spinners-kit";
 import { Configuration, OpenAIApi } from "openai";
 
+import.meta.env.VITE_GPT_KEY;
+
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import { initializeAgentExecutorWithOptions } from "langchain/agents";
+import {
+  RequestsGetTool,
+  RequestsPostTool,
+  AIPluginTool,
+} from "langchain/tools";
+
+// export const run = async () => {
+//   const tools = [
+//     new RequestsGetTool(),
+//     new RequestsPostTool(),
+//     await AIPluginTool.fromPluginUrl(
+//       "https://www.klarna.com/.well-known/ai-plugin.json"
+//     ),
+//   ];
+//   const agent = await initializeAgentExecutorWithOptions(
+//     tools,
+//     new ChatOpenAI({ temperature: 0 }),
+//     { agentType: "chat-zero-shot-react-description", verbose: true }
+//   );
+
+//   const result = await agent.call({
+//     input: "what t shirts are available in klarna?",
+//   });
+
+//   console.log({ result });
+// };
+
 // const configuration = new Configuration({
 //   apiKey: import.meta.env.VITE_GPT_KEY || "",
 // });
@@ -90,7 +121,9 @@ const App = () => {
       //   .catch((error) => {
       //     console.error("Error:", error);
       //   });
+
       console.log("fetching");
+      // run();
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
@@ -99,10 +132,10 @@ const App = () => {
         headers: myHeaders,
         redirect: "follow",
       };
-      const local_url = "http://127.0.0.1:8000/";
+      const local_url = "http://127.0.0.1:8000" + "?query=" + inputArray[0];
       try {
         const response = await fetch(local_url, requestOptions);
-        const output = await response.json().then((data) => data.Hello);
+        const output = await response.json().then((data) => data.response);
         console.log("output", output);
         return output;
       } catch (error) {
@@ -110,7 +143,7 @@ const App = () => {
         return null;
       }
     };
-
+    fetchAsciiArt();
     setAsciiMode(true);
     setFetching(false);
     setSubmit(false);

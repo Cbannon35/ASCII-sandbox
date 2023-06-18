@@ -125,18 +125,18 @@ const HiddenInput = (props: HiddenInputProps) => {
 
   function render() {
     if (inputArray.length === 1 && inputArray[0].length === 0) {
-      console.log("empty array render");
       return <span className="prompt">Type something...</span>;
     }
     if (fetching) {
-      console.log("fetching render");
       return <span className="prompt">Fetching...</span>;
     }
     if (asciiMode) {
-      console.log("ascii render");
-      return <pre>I will be ascii</pre>;
+      return (
+        <pre>
+             {ascii}                                              
+        </pre>
+      );
     } else {
-      console.log("normal render");
       return inputArray.map((item, key) => (
         <div
           key={key}
