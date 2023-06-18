@@ -1,5 +1,12 @@
+@font-face {
+  font-family: "Minecraft";
+  src: url("./assets/FontsFree-Net-Minecraft-1.ttf") format("ttf");
+  font-style: normal;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Minecraft";
+  letter-spacing: 1px;
   line-height: 1.5;
   font-weight: 400;
 
@@ -66,3 +73,61 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.vanish {
+  display: none;
+}
+
+.header-shown {
+  transform: translateY(0px);
+  transition: 2s;
+}
+
+.header-hidden {
+  transform: translateY(-200px);
+  transition: 3s;
+  opacity: 0;
+}
+
+.header-hover-shown {
+  transform: translateY(-100px);
+  transition: 0s;
+}
+
+.header-hover-hidden {
+  transform: translateY(0px);
+  transition: 6s;
+}
+
+.menu-shown {
+  transform: translateY(60px);
+  transition: 3s;
+}
+
+.menu-hidden {
+  transform: translateY(-600px);
+  transition: 3s;
+  opacity: 0;
+}
+
+/* .blinking-cursor {
+  animation: blink-animation 2s step-end infinite;
+  background-color: white;
+  margin-left: 3px;
+  max-width: 10px;
+}
+
+@keyframes blink-animation {
+  0% {
+    visibility: hidden;
+  }
+  50% {
+    visibility: hidden;
+  }
+  51% {
+    visibility: visible;
+  }
+  100% {
+    visibility: visible;
+  }
+} */

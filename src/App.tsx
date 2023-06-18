@@ -1,59 +1,237 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef } from "react";
 import axios from "axios";
+import Header from "./Header";
+import "./index.css";
+import ArrowUp from "./assets/Vector";
+import "animate.css";
+import HiddenInput from "./HiddenInput";
+import { ImpulseSpinner } from "react-spinners-kit";
+import { Configuration, OpenAIApi } from "openai";
+
+// const configuration = new Configuration({
+//   apiKey: import.meta.env.VITE_GPT_KEY || "",
+// });
+// const openai = new OpenAIApi(configuration);
+
+// dotenv.config();
+
+// const openai = new OpenAI(import.meta.env.VITE_GPT_KEY || "");
 
 // require("dotenv").config();
 // const apiKey = process.env.REACT_APP_FIGLET_API_KEY;
 
 const App = () => {
-  const [backgroundColor, setBackgroundColor] = useState("red");
-  const [textColor, setTextColor] = useState("white");
-  const [text, setText] = useState("heheh");
-  const [asciiArt, setAsciiArt] = useState("");
+  /* header logic + state passed to header */
+  const [backgroundColor, setBackgroundColor] = useState("#000000");
+  const [textColor, setTextColor] = useState("#FFFFFF");
   const [font, setFont] = useState("doom");
   const [showHeader, setShowHeader] = useState(false);
+  const [position, setPosition] = useState("left");
+  const [wrap, setWrap] = useState(false);
+  const [idle, setIdle] = useState(false);
+
+  /* styles based on state */
+  const stateStyle = {
+    container: {
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: backgroundColor,
+      color: textColor,
+    },
+    headerHover: {
+      width: "100%",
+      position: "fixed",
+      height: "100px",
+    },
+  };
+
+  /* input logic */
+  const [inputArray, setInputArray] = useState<string[]>([""]);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  function isInputArrayEmpty() {
+    return inputArray.length === 1 && inputArray[0].length === 0;
+  }
+
+  /* ascii art logic */
+  const [asciiArt, setAsciiArt] = useState("");
+  const [asciiMode, setAsciiMode] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [submit, setSubmit] = useState<boolean>(false);
 
   useEffect(() => {
+    if (isInputArrayEmpty()) return;
+    setFetching(true);
     const fetchAsciiArt = async () => {
-      try {
-        const response = await axios.post("https://figlet-api-endpoint", {
-          text: text,
-          font: font,
-        });
+      // fetch("	https://api.openai.com/v1/chat/completions", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     Authorization: `Bearer ${import.meta.env.VITE_GPT_KEY}`,
+      //   },
+      //   body: JSON.stringify({
+      //     prompt,
+      //     max_tokens: 20,
+      //     // Add your plugin here
+      //     plugins: [
+      //       {
+      //         id: "Figlet",
+      //         // Add any necessary parameters for the plugin
+      //         params: {
+      //           text: inputArray[0],
+      //           font: font,
+      //         },
+      //       },
+      //     ],
+      //   }),
+      // })
+      //   .then((response) => response.json())
+      //   .then((data) => console.log(data))
+      //   .catch((error) => {
+      //     console.error("Error:", error);
+      //   });
+      console.log("fetching");
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
 
-        if (response.data.status === "success") {
-          setAsciiArt(response.data.ascii);
-        } else {
-          console.error("Failed to fetch ASCII art");
-        }
+      var requestOptions: RequestInit = {
+        method: "POST",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+      const local_url = "http://127.0.0.1:8000/";
+      try {
+        const response = await fetch(local_url, requestOptions);
+        const output = await response.json().then((data) => data.Hello);
+        console.log("output", output);
+        return output;
       } catch (error) {
-        console.error("An error occurred while fetching ASCII art:", error);
+        console.log("error:", error);
+        return null;
       }
     };
 
-    fetchAsciiArt();
-  }, [text, font]);
+    setAsciiMode(true);
+    setFetching(false);
+    setSubmit(false);
+  }, [submit]);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    setText(text);
-  };
+  /* if user changes input, reset fetched */
+  useEffect(() => {
+    if (isInputArrayEmpty()) return;
+    setAsciiMode(false);
+    console.log("user typed");
+  }, [inputArray]);
+
+  // const handleSubmit = (event: React.FormEvent) => {
+  //   event.preventDefault();
+  //   setText(text);
+  // };
+
+  /* menu logic */
+  const menu = ["M", "E", "N", "U"];
+  const [showMenu, setShowMenu] = useState(false);
+  useEffect(() => {
+    // console.log(inputArray);
+    if (inputArray[0].length !== 0 || inputArray.length !== 1 || showHeader)
+      return;
+    const interval = setInterval(() => {
+      setShowMenu(true);
+      const menuTimeout = setTimeout(() => {
+        setShowMenu(false);
+      }, 3000);
+      return () => clearTimeout(menuTimeout);
+    }, 6000);
+    return () => clearInterval(interval);
+  });
 
   return (
-    <div>
-      <h1>ASCII Art Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
+    <div style={stateStyle.container}>
+      <div style={styles.content}>
+        <HiddenInput
+          inputArray={inputArray}
+          setInputArray={setInputArray}
+          currentIndex={currentIndex}
+          setCurrentIndex={setCurrentIndex}
+          position={position}
+          wrap={wrap}
+          setIdle={setIdle}
+          fetching={fetching}
+          asciiMode={asciiMode}
+          asciiArt={asciiArt}
         />
-        <button type="submit">Submit</button>
-      </form>
-      <pre style={{ color: textColor, backgroundColor: backgroundColor }}>
-        {asciiArt}
-      </pre>
+      </div>
+      <div
+        style={styles.menu}
+        className={showMenu ? "menu-shown" : "menu-hidden"}
+      >
+        <ArrowUp style={styles.menuItem} color={textColor} />
+        {menu.map((item, key) => (
+          <div key={key} style={styles.menuItem}>
+            {item}
+          </div>
+        ))}
+      </div>
+      <div
+        style={stateStyle.headerHover}
+        onMouseEnter={() => setShowHeader(true)}
+        className={showHeader ? "header-hover-shown" : "header-hover-hidden"}
+      />
+      <Header
+        backgroundColor={backgroundColor}
+        setBackgroundColor={setBackgroundColor}
+        showHeader={showHeader}
+        setShowHeader={setShowHeader}
+        textColor={textColor}
+        setTextColor={setTextColor}
+        font={font}
+        setFont={setFont}
+        position={position}
+        setPosition={setPosition}
+        wrap={wrap}
+        setWrap={setWrap}
+      />
+      <button style={styles.submit} onClick={() => setSubmit(true)}>
+        Submit
+      </button>
     </div>
   );
+};
+
+const styles = {
+  content: {
+    padding: "100px",
+    display: "flex",
+    height: "calc(100% - 210px)",
+    width: "calc(100% - 200px)",
+    position: "fixed",
+    bottom: "0px",
+    flexDirection: "column",
+  },
+  menuItem: {
+    marginRight: "0px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    marginLeft: "0px",
+    alignSelf: "center",
+    fontSize: "42px",
+  },
+  menu: {
+    position: "fixed",
+    right: "0px",
+    width: "75px",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignContent: "center",
+    paddingTop: "50px",
+    paddingRight: "10px",
+  },
+  submit: {
+    position: "fixed",
+    bottom: "0px",
+    self: "center",
+  },
 };
 
 export default App;
