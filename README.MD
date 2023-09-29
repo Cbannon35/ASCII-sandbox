@@ -2,6 +2,8 @@
 
 This project was initiallly created for Calhack's AI Hackathon. 
 
+Please navigate to the ai-hackathon branch or follow this link if you're interested in the code for the submission: https://github.com/Cbannon35/ascii-sandbox/tree/ai-hackathon-2023
+
 ## Blurb
 
 After playing around with my newfound acess to GPT plugins I stumbled upon "Figlet". A plugin which would generate ASCII based on the text you input. 
