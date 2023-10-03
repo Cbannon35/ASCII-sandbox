@@ -4,7 +4,7 @@ let pointer_value: number;
 let ascii_value: string[][];
 let ascii_encoding_value: string[][];
 
-figlet.defaults({ fontPath: 'node_modules/figlet/fonts' });
+figlet.defaults({ fontPath: '/fonts' });
 
 pointer.subscribe((value) => {
 	pointer_value = value;
