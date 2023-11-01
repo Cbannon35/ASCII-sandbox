@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Menu from './menu.svelte';
-	import { ascii_struct, color, pointer } from '../stores';
+	import { ascii, ascii_struct, color, pointer } from '../stores';
+	import { ColorMode, update_color_mode } from '../types';
+
 	/*** MENU LOGIC FOR ASCII STYLES ***/
 	let backgroundColor: String = '#FFFF00';
 	let c: string;
@@ -8,8 +10,23 @@
 		console.log('changing', value);
 		c = value;
 	});
+	let mode: ColorMode = ColorMode.GLOBAL;
+	function getColor(mode: ColorMode, row: number, char: number) {
+		switch (mode) {
+			case ColorMode.GLOBAL:
+				return c;
+			case ColorMode.ROW:
+				return $ascii_struct[row].color;
+			case ColorMode.CHAR:
+				return $ascii_struct[row].ascii[char].color;
+			default:
+				return c;
+		}
+	}
+
 	/* Keydown logic */
 	import on_key_down from './keyboardlogic';
+
 	/* Cursor logic */
 	let cursor_display = true;
 	const cursor = () => (cursor_display = !cursor_display);
@@ -23,14 +40,14 @@
 <svelte:window on:keydown={on_key_down} />
 
 <main style="background-color: {backgroundColor}; color: {c}">
-	<Menu bind:backgroundColor bind:c />
+	<Menu bind:backgroundColor bind:c bind:mode />
 	<div>
 		{#each $ascii_struct as row, i}
 			<div style="display: flex">
 				{#each row.ascii as a, j}
 					<span
 						class={j === row.ascii.length - 1 && i == $pointer && cursor_display ? 'element' : ''}
-						style="--c: {c}"
+						style="--c: {getColor(mode, i, j)}"
 					>
 						<pre>{a.encoding}</pre>
 					</span>

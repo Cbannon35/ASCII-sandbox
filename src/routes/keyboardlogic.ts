@@ -22,7 +22,7 @@ async function handleKey(key: string) {
 			arr[pointer_value].ascii.push({
 				str: key,
 				encoding: data,
-				color: 'white'
+				color: '#000000'
 			});
 			return arr;
 		});
