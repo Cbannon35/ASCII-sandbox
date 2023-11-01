@@ -9,7 +9,7 @@
 		c = value;
 	});
 	/* Keydown logic */
-	import on_key_down from './keyboardlogic2';
+	import on_key_down from './keyboardlogic';
 	/* Cursor logic */
 	let cursor_display = true;
 	const cursor = () => (cursor_display = !cursor_display);
