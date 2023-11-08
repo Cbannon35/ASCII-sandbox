@@ -69,7 +69,7 @@
 			}}>Hide Menu</button
 		>
 	</div>
-	<div class="menuItem" style="--bg: {backgroundColor}">balls</div>
+	<div class="menuItem" style="--bg: {backgroundColor}" />
 </div>
 
 <style lang="postcss">
