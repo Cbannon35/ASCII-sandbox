@@ -1,28 +1,27 @@
 <script lang="ts">
 	import Menu from './menu.svelte';
-	import { ascii, ascii_struct, color, pointer } from '../stores';
+	import { ascii, ascii_struct, textColor, pointer_row, pointer_char } from '../stores';
 	import { ColorMode, update_color_mode } from '../types';
 
 	/*** MENU LOGIC FOR ASCII STYLES ***/
-	let backgroundColor: String = '#FFFF00';
-	let c: string;
-	color.subscribe((value) => {
-		console.log('changing', value);
-		c = value;
-	});
+	let showMenu = false;
+	let backgroundColor: string = '#000000';
+	let alignment: string = 'flex-start';
+	let color: string = $textColor;
 	let mode: ColorMode = ColorMode.GLOBAL;
 	function getColor(mode: ColorMode, row: number, char: number) {
 		switch (mode) {
 			case ColorMode.GLOBAL:
-				return c;
+				return color;
 			case ColorMode.ROW:
 				return $ascii_struct[row].color;
 			case ColorMode.CHAR:
 				return $ascii_struct[row].ascii[char].color;
 			default:
-				return c;
+				return color;
 		}
 	}
+	let fontChanges: number = 0;
 
 	/* Keydown logic */
 	import on_key_down from './keyboardlogic';
@@ -39,27 +38,45 @@
 
 <svelte:window on:keydown={on_key_down} />
 
-<main style="background-color: {backgroundColor}; color: {c}">
-	<Menu bind:backgroundColor bind:c bind:mode />
-	<div>
-		{#each $ascii_struct as row, i}
-			<div style="display: flex">
-				{#each row.ascii as a, j}
-					<span
-						class={j === row.ascii.length - 1 && i == $pointer && cursor_display ? 'element' : ''}
-						style="--c: {getColor(mode, i, j)}"
-					>
-						<pre>{a.encoding}</pre>
-					</span>
-				{/each}
-			</div>
-		{/each}
-	</div>
+<main style="background-color: {backgroundColor}; color: {color}">
+	<button
+		style="display: {showMenu ? 'none' : ''}"
+		class="toggleMenu"
+		on:click={() => {
+			showMenu = !showMenu;
+		}}>Show Menu</button
+	>
+	<Menu bind:backgroundColor bind:color bind:mode bind:fontChanges bind:showMenu bind:alignment />
+	{#key fontChanges}
+		<div class="content">
+			{#each $ascii_struct as row, i}
+				<div class="row" style="--align: {alignment}">
+					{#each row.ascii as a, j}
+						<span
+							class={j === $pointer_char - 1 && i == $pointer_row && cursor_display
+								? 'element'
+								: ''}
+							style="--c: {getColor(mode, i, j)}"
+						>
+							<pre>{a.encoding}</pre>
+						</span>
+					{/each}
+				</div>
+			{/each}
+		</div>
+	{/key}
 </main>
 
 <style lang="postcss">
 	main {
-		@apply h-screen w-screen;
+		@apply min-h-screen min-w-max;
+	}
+	.content {
+		@apply pr-8;
+	}
+	.row {
+		@apply flex flex-row;
+		justify-content: var(--align);
 	}
 
 	/*Thank you chat gpt */
