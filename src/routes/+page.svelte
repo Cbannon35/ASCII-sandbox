@@ -36,16 +36,13 @@
 	}
 </script>
 
-<svelte:window on:keydown={on_key_down} />
+<svelte:window
+	on:keydown={(event) => {
+		on_key_down(event, showMenu);
+	}}
+/>
 
-<main style="background-color: {backgroundColor}; color: {color}">
-	<button
-		style="display: {showMenu ? 'none' : ''}"
-		class="toggleMenu"
-		on:click={() => {
-			showMenu = !showMenu;
-		}}>Show Menu</button
-	>
+<main style="--bg: {backgroundColor}; --color: {color}">
 	<Menu bind:backgroundColor bind:color bind:mode bind:fontChanges bind:showMenu bind:alignment />
 	{#key fontChanges}
 		<div class="content">
@@ -53,7 +50,7 @@
 				<div class="row" style="--align: {alignment}">
 					{#each row.ascii as a, j}
 						<span
-							class={j === $pointer_char - 1 && i == $pointer_row && cursor_display
+							class={j === $pointer_char - 1 && i == $pointer_row && cursor_display && !showMenu
 								? 'element'
 								: ''}
 							style="--c: {getColor(mode, i, j)}"
@@ -69,7 +66,7 @@
 
 <style lang="postcss">
 	main {
-		@apply min-h-screen min-w-max;
+		@apply min-h-screen min-w-max bg-[var(--bg)] text-[var(--color)];
 	}
 	.content {
 		@apply pr-8;

@@ -1,4 +1,5 @@
 import { ascii_struct, font, pointer_char, pointer_row } from '../stores.js';
+import type { ascii } from '../types.js';
 
 let pointer_value: number;
 let pointer_cursor: number;
@@ -92,36 +93,25 @@ function handleBackspace() {
 			return arr;
 		}
 	});
-
-	// ascii_struct.update((arr) => {
-	// 	if (arr[pointer_value].ascii.length === 0) {
-	// 		pointer_row.update((n) => {
-	// 			if (n > 0) {
-	// 				return n - 1;
-	// 			}
-	// 			return n;
-	// 		});
-	// 		pointer_char.update((n) => {
-	// 			return arr[pointer_value].ascii.length;
-	// 		});
-	// 		return arr.slice(0, -1);
-	// 	}
-	// 	arr[pointer_value].ascii.pop(); //pop last element in row
-	// 	pointer_char.update((n) => {
-	// 		return n - 1;
-	// 	});
-	// 	return arr;
-	// });
 }
 
 function handleEnter() {
 	console.log('handleEnter');
 	ascii_struct.update((arr) => {
-		arr.push({ ascii: [], color: '#000000' });
+		// if our pointer is at the end of the row, we want to add a new row
+		if (pointer_cursor === arr[pointer_value].ascii.length) {
+			arr.splice(pointer_value + 1, 0, { ascii: [], color: '#FFFFFF' });
+			return arr;
+		}
+		// if our pointer is in the middle of the row, we want to split the row
+		arr.splice(pointer_value + 1, 0, {
+			ascii: arr[pointer_value].ascii.splice(pointer_cursor),
+			color: '#FFFFFF'
+		});
 		return arr;
 	});
 	pointer_row.update((n) => n + 1);
-	pointer_char.update((n) => 0);
+	pointer_char.update((n) => $ascii_struct[pointer_value].ascii.length);
 	console.log(ascii_struct);
 }
 
@@ -171,7 +161,8 @@ function moveCursor(key: string) {
 	}
 }
 
-function on_key_down(event: KeyboardEvent) {
+function on_key_down(event: KeyboardEvent, flag: boolean) {
+	if (flag) return;
 	// `keydown` event is fired while the physical key is held down.
 
 	// Assuming you only want to handle the first press, we early

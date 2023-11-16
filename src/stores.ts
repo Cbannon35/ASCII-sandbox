@@ -1,15 +1,5 @@
 import { writable } from 'svelte/store';
-
-interface ascii {
-	str: string;
-	encoding: string;
-	color: string;
-}
-
-interface ascii_row {
-	ascii: ascii[];
-	color: string;
-}
+import type { ascii_row } from './types';
 
 export let textColor = writable<string>('#FFFFFF');
 export let ascii_struct = writable<ascii_row[]>([]);
