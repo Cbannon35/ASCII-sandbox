@@ -37,6 +37,31 @@
 				<input class="item-r" type="color" bind:value={backgroundColor} id="backgroundColor" />
 				<p class="item-l">COLOR:</p>
 				<input class="item-r" type="color" bind:value={color} id="color" />
+				<p class="item-l">ALIGNMENT:</p>
+				<div class="item-r">
+					<button
+						on:click={() => {
+							alignment = 'flex-start';
+						}}>L</button
+					>
+					<button
+						on:click={() => {
+							alignment = 'center';
+						}}>M</button
+					>
+					<button
+						on:click={() => {
+							alignment = 'flex-end';
+						}}>R</button
+					>
+				</div>
+				<p class="item-l">COLOR MODE:</p>
+				<button
+					class="item-r"
+					on:click={() => {
+						mode = update_color_mode(mode);
+					}}>coming soon...</button
+				>
 			</div>
 			<div class="menuContentsRight fonts">
 				<div class="selectedFontTitle">
@@ -56,11 +81,6 @@
 			</div>
 		</div>
 
-		<!-- <button
-			on:click={() => {
-				mode = update_color_mode(mode);
-			}}>change mode</button
-		> -->
 		<!-- <select
 			class="fonts"
 			bind:value={$font}
