@@ -66,7 +66,7 @@
 
 <style lang="postcss">
 	main {
-		@apply min-h-screen min-w-max bg-[var(--bg)] text-[var(--color)];
+		@apply min-h-screen min-w-max bg-[var(--bg)] text-[var(--color)] absolute;
 	}
 	.content {
 		@apply pr-8;
