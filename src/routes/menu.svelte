@@ -32,17 +32,35 @@
 		</div>
 
 		<div class="menuContents">
-			<p class="item-l">BACKGROUND:</p>
-			<input class="item-r" type="color" bind:value={backgroundColor} id="backgroundColor" />
-			<p class="item-l">COLOR:</p>
-			<input class="item-r" type="color" bind:value={color} id="color" />
+			<div class="menuContentsLeft">
+				<p class="item-l">BACKGROUND:</p>
+				<input class="item-r" type="color" bind:value={backgroundColor} id="backgroundColor" />
+				<p class="item-l">COLOR:</p>
+				<input class="item-r" type="color" bind:value={color} id="color" />
+			</div>
+			<div class="menuContentsRight fonts">
+				<div class="selectedFontTitle">
+					FONT SELECTED: <span class="selectedFont">{$font}</span>
+				</div>
+				{#each fonts as f, index}
+					<p
+						style={f === $font ? 'background-color: var(--color); color: var(--bg)' : ''}
+						on:click={() => {
+							font.update((n) => f);
+							update();
+						}}
+					>
+						{f}
+					</p>
+				{/each}
+			</div>
 		</div>
 
-		<button
+		<!-- <button
 			on:click={() => {
 				mode = update_color_mode(mode);
 			}}>change mode</button
-		>
+		> -->
 		<!-- <select
 			class="fonts"
 			bind:value={$font}
@@ -82,7 +100,7 @@
 	</div>
 </div>
 <div class="menuBar" style="--bg: {backgroundColor}">
-	<button class="menuButton">&uarr;</button>
+	<!-- <button class="menuButton">&uarr;</button> -->
 	<h1 class="title">ASCII SANDBOX</h1>
 	<button
 		class="menuButton"
@@ -115,33 +133,43 @@
 		@apply flex flex-row justify-between text-3xl p-2 sticky top-0 mb-4;
 	}
 	.menuBar {
-		@apply bg-[var(--color)] text-[var(--bg)] flex flex-row justify-between text-2xl p-2 top-0 w-screen sticky left-0;
+		@apply bg-[var(--color)] text-[var(--bg)] text-2xl p-2 top-0 w-screen sticky left-0 text-center;
 	}
-	.fonts {
-		@apply h-min text-[var(--color)];
-	}
+
 	.menuButton {
-		@apply px-2 border-4 border-[var(--color)] hover:border-[var(--bg)] active:bg-[var(--bg)] active:text-[var(--color)];
+		@apply px-2 border-4 border-[var(--color)] hover:border-[var(--bg)] active:bg-[var(--bg)] active:text-[var(--color)] absolute right-1 top-2;
 	}
 	.menuButtonInverse {
 		@apply px-2 border-4 border-[var(--bg)] hover:border-[var(--color)] active:bg-[var(--color)] active:text-[var(--bg)];
 	}
+	.menuContentsLeft {
+		@apply grid gap-4 p-2 grid-cols-2 grid-rows-6 w-1/2;
+	}
+	.menuContentsRight {
+		@apply w-1/2 overflow-auto h-96;
+	}
 	.menuContents {
-		@apply grid gap-4 p-2 grid-cols-4;
+		@apply flex flex-row justify-between;
 	}
 	.menuContents p {
 		@apply text-xl p-1 bg-[var(--color)] text-[var(--bg)];
 	}
 	.item-r {
-		@apply col-start-2;
+		@apply col-start-2 self-start ml-4;
 	}
 	.item-l {
-		@apply col-start-1;
-	}
-	/* .options {
-		@apply flex flex-col gap-4 w-1/2 border-4 border-[var(--color)];
+		@apply col-start-1 self-start;
 	}
 	.fonts {
-		@apply flex flex-col gap-4 w-1/2 border-4 border-[var(--color)];
-	} */
+		@apply col-start-3 col-span-2 border-4 border-[var(--color)] flex flex-col;
+	}
+	.selectedFont {
+		@apply text-xl p-1 bg-[var(--color)] text-[var(--bg)];
+	}
+	.selectedFontTitle {
+		@apply text-xl p-2 border-b-4 border-[var(--color)] sticky top-0 bg-[var(--bg)] text-[var(--color)];
+	}
+	.fonts p {
+		@apply text-xl p-1 bg-[var(--bg)] text-[var(--color)] hover:bg-[var(--color)] hover:text-[var(--bg)] cursor-pointer;
+	}
 </style>
