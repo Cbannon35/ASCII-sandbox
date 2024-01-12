@@ -5,6 +5,7 @@
     let backgroundColor = '#000000';
 	let color = "#FFFFFF";
     let pointer = -1;
+    let zoom = 100;
 
     /**
    * @typedef {Object} Ascii_obj
@@ -74,21 +75,23 @@
 />
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<main style="--bg: {backgroundColor}; --color: {color}; position: fixed">
-    <Menu bind:backgroundColor bind:color bind:pointer/>
+<main style="--bg: {backgroundColor}; --color: {color}; --zoom: {zoom}; position: fixed">
+    <Menu bind:backgroundColor bind:color bind:pointer bind:zoom />
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="canvas" on:click={handleCanvasClick} on:wheel={handleCanvasScroll}>
     {#each ascii as a}
-        <AsciiRow bind:x={a.x} bind:y={a.y} id={a.id} text={a.text} select={select} />
+        <AsciiRow bind:x={a.x} bind:y={a.y} id={a.id} text={a.text} select={select} zoom={zoom}/>
     {/each}
   </div>
 </main>
 
 <style lang="postcss">
     .canvas {
-        width: 100vw;
+        width: 100%;
+        min-height: 100%;
         height: calc(100vh - 100px);
         background-color: purple;
         z-index: 0;
+        transform: scale(var(--zoom)/100);
     }
 </style>

@@ -3,6 +3,8 @@
     export let backgroundColor;
     export let color;
     export let pointer;
+    /** @type {number}*/
+    export let zoom;
 </script>
 
 <div class = "menu">
@@ -11,7 +13,8 @@
         <a href="/ascii">ASCII</a>
         <a href="/about">ABOUT</a>
         <a href="/contact">CONTACT</a>
-        <button>SAVE</button>
+        <button on:click={() => zoom += .1}>+</button>
+        <button on:click={() => zoom -= .1}>-</button>
         <button on:click={() => {pointer = -1}}>Deselect </button>
     </div>
 </div>

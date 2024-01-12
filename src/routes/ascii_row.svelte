@@ -10,6 +10,8 @@
     export let select;
     /** @type {string}*/
     export let text;
+    /** @type {number}*/
+    export let zoom;
     console.log("New row @ x y :", x, y)
 
    /**
@@ -37,13 +39,15 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class = "row" style = "left:{x}px; top:{y}px" 
-on:click={(e) => 
-    {
-        e.stopPropagation(); 
-        select(id)
-    }
-}>
+<div 
+    class = "row" 
+    style = "left:{x}px; top:{y}px; transform: scale({zoom/100})" 
+    on:click={(e) => 
+        {
+            e.stopPropagation(); 
+            select(id)
+        }
+    }>
     <div class = "drag-handle" 
     on:dragstart={(e) => {
         // Set the drag data for offsetX and offsetY
