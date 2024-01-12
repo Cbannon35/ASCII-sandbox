@@ -66,10 +66,10 @@
 
 <style lang="postcss">
 	main {
-		@apply min-h-screen min-w-max bg-[var(--bg)] text-[var(--color)] absolute;
+		@apply min-h-screen min-w-full bg-[var(--bg)] text-[var(--color)] fixed;
 	}
 	.content {
-		@apply pr-8;
+		@apply pr-8 pt-12 overflow-auto h-full w-full;
 	}
 	.row {
 		@apply flex flex-row;

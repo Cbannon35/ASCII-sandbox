@@ -68,7 +68,8 @@
 					FONT SELECTED: <span class="selectedFont">{$font}</span>
 				</div>
 				{#each fonts as f, index}
-					<p
+					<button
+						class="font-select"
 						style={f === $font ? 'background-color: var(--color); color: var(--bg)' : ''}
 						on:click={() => {
 							font.update((n) => f);
@@ -76,7 +77,7 @@
 						}}
 					>
 						{f}
-					</p>
+					</button>
 				{/each}
 			</div>
 		</div>
@@ -121,9 +122,9 @@
 </div>
 <div class="menuBar" style="--bg: {backgroundColor}">
 	<!-- <button class="menuButton">&uarr;</button> -->
-	<h1 class="title">ASCII SANDBOX</h1>
+	<button>screenshot</button>
+	<h1>ASCII SANDBOX</h1>
 	<button
-		class="menuButton"
 		on:click={() => {
 			showMenu = true;
 		}}>SETTINGS</button
@@ -153,7 +154,7 @@
 		@apply flex flex-row justify-between text-3xl p-2 sticky top-0 mb-4;
 	}
 	.menuBar {
-		@apply bg-[var(--color)] text-[var(--bg)] text-2xl p-2 top-0 w-screen sticky left-0 text-center;
+		@apply bg-[var(--color)] text-[var(--bg)] text-2xl p-2 top-0 w-full fixed left-0 text-center flex flex-row justify-between;
 	}
 
 	.menuButton {
@@ -189,7 +190,7 @@
 	.selectedFontTitle {
 		@apply text-xl p-2 border-b-4 border-[var(--color)] sticky top-0 bg-[var(--bg)] text-[var(--color)];
 	}
-	.fonts p {
+	.fonts button {
 		@apply text-xl p-1 bg-[var(--bg)] text-[var(--color)] hover:bg-[var(--color)] hover:text-[var(--bg)] cursor-pointer;
 	}
 </style>
