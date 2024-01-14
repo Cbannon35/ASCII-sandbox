@@ -1,8 +1,8 @@
 <script>
-    console.log("hi")
+    import { pointer } from "$lib/stores.js";
     export let backgroundColor;
     export let color;
-    export let pointer;
+    
     /** @type {number}*/
     export let zoom;
 </script>
@@ -10,12 +10,9 @@
 <div class = "menu">
     <h1>ASCII SANDBOX</h1>
     <div>
-        <a href="/ascii">ASCII</a>
-        <a href="/about">ABOUT</a>
-        <a href="/contact">CONTACT</a>
         <button on:click={() => zoom += .1}>+</button>
         <button on:click={() => zoom -= .1}>-</button>
-        <button on:click={() => {pointer = -1}}>Deselect </button>
+        <button on:click={() => {pointer.set(-1)}}>Deselect </button>
     </div>
 </div>
 

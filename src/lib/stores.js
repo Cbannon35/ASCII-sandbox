@@ -1,3 +1,21 @@
+import { writable } from 'svelte/store';
+
+/**
+ * Writable store for ASCII components.
+ * @type {import("svelte/store").Writable<Ascii_obj[]>}
+ */
+export let ascii = writable([]);
+
+/**
+ * The currently selected ascii object.
+ * @type {import("svelte/store").Writable<number>}
+ */
+export let pointer = writable(0);
+
+/**
+ * All currently supported figlet fonts.
+ * @type {string[]}
+ */
 export const fonts = [
 	'1Row',
 	'3-D',

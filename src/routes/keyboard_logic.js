@@ -1,34 +1,53 @@
+import { ascii, pointer } from '$lib/stores.js';
+
+/**@type {number} */
+let $pointer;
+pointer.subscribe((val) => {
+	$pointer = val;
+});
+
 /**@type {any}*/
 const keysPressed = {};
 
 /**
- * Handles a general key press
+ * Handles a general key press. Adds what the user types to the current text object.
  * @param {string} key - The key that was pressed
- * @param {Ascii_obj[]} ascii - The ascii chunk that the cursor is currently in
- * @param {number} pointer - The index of the ascii object in the ascii array
- * @param {function} setAscii - Function to reset array
  * @returns nothing
  */
-function handleKey(key, ascii, pointer, setAscii) {
-	let tmp_ascii = ascii.map((c, i) => {
-		if (i === pointer) {
-			return {
-				...c,
-				text: c.text + key
-			};
-		} else {
-			return c;
-		}
+function handleKey(key) {
+	ascii.update((ascii) => {
+		ascii[$pointer].text += key;
+		return ascii;
 	});
-	setAscii(tmp_ascii);
 }
 
 /**
- *
- * @param {Ascii_obj[]} ascii
- * @param {function} setAscii
+ * Handles the backspace key. Removes the last character from the current text object.
+ * @returns nothing
  */
-function moveCanvas(ascii, setAscii) {
+function handleBackspace() {
+	ascii.update((ascii) => {
+		if (ascii[$pointer].text.length > 0) {
+			ascii[$pointer].text = ascii[$pointer].text.slice(0, -1);
+		}
+		return ascii;
+	});
+}
+
+/**
+ * Handles the enter key. Appends a newline character to the current text object.
+ */
+function handleEnter() {
+	ascii.update((ascii) => {
+		ascii[$pointer].text += '\n';
+		return ascii;
+	});
+}
+
+/**
+ * Moves all elements on the canvas.
+ */
+function moveCanvas() {
 	let dx = 0;
 	let dy = 0;
 
@@ -45,26 +64,22 @@ function moveCanvas(ascii, setAscii) {
 		dy = 1;
 	}
 
-	console.log(ascii);
-	let tmp_ascii = ascii.map((c) => ({
-		...c,
-		x: c.x + dx,
-		y: c.y + dy
-	}));
-	setAscii(tmp_ascii);
+	ascii.update((ascii) => {
+		ascii.forEach((c) => {
+			c.x += dx;
+			c.y += dy;
+		});
+		return ascii;
+	});
 }
 
 /**
- *
- * @param {Ascii_obj[]} ascii
- * @param {number} pointer
- * @param {function} setAscii
+ * Moves the selected element.
  * @returns nothing
  */
-function moveAscii(ascii, pointer, setAscii) {
+function moveAscii() {
 	let dx = 0;
 	let dy = 0;
-	console.log(keysPressed);
 
 	if (keysPressed['ArrowLeft']) {
 		dx = -1;
@@ -79,38 +94,18 @@ function moveAscii(ascii, pointer, setAscii) {
 		dy = 1;
 	}
 
-	let tmp_ascii = ascii.map((c, i) => {
-		if (i === pointer) {
-			return {
-				...c,
-				x: c.x + dx,
-				y: c.y + dy
-			};
-		} else {
-			return c;
-		}
+	ascii.update((ascii) => {
+		ascii[$pointer].x += dx;
+		ascii[$pointer].y += dy;
+		return ascii;
 	});
-	setAscii(tmp_ascii);
 }
-
-/**
- * @typedef {Object} Ascii_obj
- * @property {number} x - The x-coordinate of the text object.
- * @property {number} y - The y-coordinate of the text object.
- * @property {number} id - Component id. Used to identify the component. Matches up with the index of the component in the coords array.
- * @property {string} text - The text to be displayed.
- */
-
 /**
  * Handles the keydown event
  * @param {KeyboardEvent} event
- * @param {boolean} flag - Whether or not an ascii object is selected (certain functionality is disabled) -> true when no ascii object is selected
- * @param {number} pointer
- * @param {Ascii_obj[]} ascii - The ascii chunk that the cursor is currently in
- * @param {function} setAscii - Function to reset array
  * @returns nothing
  */
-export function on_key_down(event, flag, pointer, ascii, setAscii) {
+export function on_key_down(event) {
 	// `keydown` event is fired while the physical key is held down.
 	// Assuming you only want to handle the first press, we early
 	// return to skip.
@@ -125,38 +120,32 @@ export function on_key_down(event, flag, pointer, ascii, setAscii) {
 		key === 'Tab' ||
 		key === 'Escape'
 	) {
-		// event.preventDefault();
-	} else {
-		event.preventDefault();
-		keysPressed[event.key] = true;
-		if (key == 'ArrowLeft' || key == 'ArrowRight' || key == 'ArrowUp' || key == 'ArrowDown') {
-			event.preventDefault();
-			if (flag) {
-				moveCanvas(ascii, setAscii);
-			} else {
-				moveAscii(ascii, pointer, setAscii);
-			}
-		} else if (key === 'Backspace') {
-			event.preventDefault();
-			handleBackspace();
-		} else if (key === 'Enter') {
-			event.preventDefault();
-			handleEnter();
+		return;
+	}
+
+	event.preventDefault();
+	keysPressed[event.key] = true;
+
+	if (key == 'ArrowLeft' || key == 'ArrowRight' || key == 'ArrowUp' || key == 'ArrowDown') {
+		if ($pointer < 0) {
+			moveCanvas();
 		} else {
-			event.preventDefault();
-			handleKey(key, ascii, pointer, setAscii);
+			moveAscii();
 		}
+	} else if (key === 'Backspace') {
+		handleBackspace();
+	} else if (key === 'Enter') {
+		handleEnter();
+	} else {
+		handleKey(key);
 	}
 }
 
 /**
- * Handles the backspace key
+ * Handles the keyup event
  * @param {KeyboardEvent} event
  */
 export function on_key_up(event) {
-	// `keyup` event is fired when the physical key is released.
-	// console.log(event.key);
 	event.preventDefault();
-	console.log(keysPressed);
 	keysPressed[event.key] = false;
 }
