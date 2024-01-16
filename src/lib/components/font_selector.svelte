@@ -47,6 +47,8 @@
         position:absolute;
         left: 0;
         bottom: -30px;
+        max-height: 200px;
+        border: 1px solid black;
     }
     .title {
         color: var(--color);
@@ -58,7 +60,6 @@
         width: var(--width);
         display: flex;
         flex-direction: column;
-        height: 200px;
         position: absolute;
     }
     .font {
