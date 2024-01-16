@@ -1,5 +1,6 @@
 <script>
 	import { ascii, pointer } from "$lib/stores";
+    import FontSelector from "$lib/components/font_selector.svelte";
 
     /** @type {number}*/
     export let x
@@ -17,6 +18,8 @@
     let padding = 10;
     /** @type {boolean} */
     let moving = false;
+    /** @type {string} */
+    let font = "standard"
 	
     /**
      * Function to handle the mouse down event and set the moving flag to true.
@@ -43,52 +46,6 @@
 	function onMouseUp() {
 		moving = false;
 	}
-
-   /**
-   * Function to handle the drag event and update the x and y coordinates.
-   * @param {DragEvent} event - The drag event object.
-   */
-  function onDrag(event) {
-    if (!event.dataTransfer) return;
-    const event_x = parseInt(event.dataTransfer.getData('offsetX'), 10);
-    const event_y = parseInt(event.dataTransfer.getData('offsetY'), 10);
-    console.log(event.dataTransfer.getData('offsetX'), event.dataTransfer.getData('offsetY'))
-    const offsetX = event.clientX - event_x;
-    const offsetY = event.clientY - event_y;
-
-    x = offsetX;
-    y = offsetY;
-    console.log(x, y)
-  }
-
-  /**
-   * Function to handle starting the drag event.
-   * @param {DragEvent} event - The drag event object.
-  */
-    function onDragStart(event) {
-        if (!event.dataTransfer) return;
-        console.log("starting",event.clientX.toString(), event.clientY.toString())
-        event.dataTransfer.setData('offsetX', event.clientX.toString());
-        event.dataTransfer.setData('offsetY', event.clientY.toString());
-    }
-
-    /**
-     * Function to handle ending the drag event. Updates the ascii store with the new x and y coordinates.
-     * @param {DragEvent} event - The drag event object.
-    */
-    function onDragEnd(event) {
-        ascii.update((a) => {
-            a.map((row) => {
-                if (row.id == id) {
-                    row.x = x;
-                    row.y = y;
-                }
-                return row;
-            })
-            return a;
-        });
-    }
-  
 </script>
 
 <svelte:window on:mouseup={onMouseUp} on:mousemove={onMouseMove} />
@@ -104,16 +61,15 @@
     }}
     >
     <div class = "ascii">
-        <p>Row {id}</p>
-        <p>X {x}</p>
-        <p>Y {y}</p>
-        <p>Text: {text}</p>
+        <p>{text}</p>
 
         <div class = "handle" 
         on:mousedown={onMouseDown}
         />
     </div>
+    <FontSelector bind:font={font}/>
 </div>
+
 
 <style lang="postcss">
     .row {
@@ -121,8 +77,6 @@
         background-color: red;
         z-index: 10;
         cursor: crosshair;
-        width: 100px;
-        height: 100px;
     }
     .handle {
         position: absolute;
