@@ -56,56 +56,8 @@
         z-index: 10;
         cursor: crosshair;
     }
-    .handle {
-        position: absolute;
-        background-color: blue;
-        z-index: 20;
-        cursor: grab;
-        width: 20px;
-        height: 20px;
-    }
     .ascii {
         user-select: none;
         font-size: medium;
-    }
-    .selected {
-        border: 4px solid green;
-    }
-    .left {
-        position: absolute;
-        left: -5px;
-        top: 0;
-        bottom: 0;
-        width: 5px;
-        background-color: green;
-        cursor: ew-resize;
-    }
-    .right {
-        position: absolute;
-        right: -5px;
-        top: 0;
-        bottom: 0;
-        width:5px;
-        background-color: green;
-        cursor: ew-resize;
-    }
-    .top {
-        position: absolute;
-        left: -5px;
-        right: 0;
-        top: -5px;
-        height: 5px;
-        width: calc(100% + 10px);
-        background-color: green;
-        cursor: ns-resize;
-    }
-    .bot {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -5px;
-        height: 5px;
-        background-color: green;
-        cursor: ns-resize;
     }
 </style>
