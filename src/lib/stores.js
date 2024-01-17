@@ -1,4 +1,15 @@
 import { writable } from 'svelte/store';
+import figlet from 'figlet';
+
+/* Global variables */
+/** @type {import("svelte/store").Writable<string>} */
+export let color_global = writable('#ffffff');
+/** @type {import("svelte/store").Writable<string>} */
+export let bg_color_global = writable('#000000');
+/** @type {import("svelte/store").Writable<import("figlet").Fonts>}*/
+export let font_global = writable('Standard');
+/** @type {import("svelte/store").Writable<import("figlet").Fonts>}*/
+export let font_pointer = writable('Standard');
 
 /**
  * Writable store for ASCII components.

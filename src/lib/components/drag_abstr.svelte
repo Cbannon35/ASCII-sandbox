@@ -7,6 +7,9 @@
 
 
 <script>
+	import Xsvg from "./Xsvg.svelte";
+    import { ascii, pointer } from "$lib/stores.js";
+
 
     /** @type {number} */
     export let p_top;
@@ -61,7 +64,6 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="left {dragging ? "dragging" : ""}" on:mousedown={(e) => {
-    console.log("dragging")
     dragging = true
     }}></div>
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -76,8 +78,12 @@
     move_dir.push("bottom");
     move_dir.push("top");
     }}></div>
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- <div class="top" on:mousedown={() => {onMouseDown("top")}}></div> -->
+
+<div class="top"><button on:click={(e) => {
+    e.stopPropagation();
+    ascii.update((n) => n.filter((a) => a.id != $pointer));
+    pointer.set(-1);
+}}>X</button></div>
 
 
 
@@ -105,12 +111,14 @@
     }
     .top {
         position: absolute;
-        left: 0px;
-        right: 0;
-        top: -5px;
-        height: 5px;
-        background-color: green;
+        left: -5px;
+        /* right: 0; */
+        top: -25px;
+        width: calc(100% + 10px);
+        height: 25px;
         cursor: ns-resize;
+        background-color: greenyellow;
+        font-size: 12px;
     }
     .bot {
         position: absolute;

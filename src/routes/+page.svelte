@@ -3,10 +3,11 @@
     import AsciiRow from './ascii_row.svelte';
 
     import { on_key_down, on_key_up } from "./keyboard_logic.js";
-    import { ascii, pointer } from "../lib/stores.js";
+    import { ascii, pointer, color_global, bg_color_global, font_global } from "../lib/stores.js";
 
-    let backgroundColor = '#000000';
-	let color = "#FFFFFF";
+    let color = $color_global;
+    let backgroundColor = $bg_color_global;
+    let font = $font_global;
     
     let zoom = 100;
 
@@ -21,27 +22,23 @@
     const y = event.clientY -100;
 
     ascii.update((a) => {
-        const new_ascii = { x, y, id: a.length, text: ""};
+        /**@type {Ascii_obj} */
+        let new_ascii = {
+            x: x,
+            y: y,
+            id: a.length,
+            font: font,
+            color: color,
+            bg_color: backgroundColor,
+            pointer: 0,
+            asciis: [[]],
+        }
+
         pointer.set(new_ascii.id);
         return [...a, new_ascii]
     });
     console.log($ascii)
   }
-
-  /**
-   * Deletes the currently selected ascii row and resets the pointer to -1 and each ascii row's id to it's index.
-   */
-    function deleteSelectedAscii() {
-        if ($pointer < 0) return;
-        ascii.update((ascii) => {
-            return ascii.map((a, i) => {
-                a.id = i;
-                return a;
-            }).filter((a) => a.id != -1);
-        });
-            
-        pointer.set(-1);
-    }
 
   /**
    * Handles scroll events on the canvas.
@@ -66,7 +63,6 @@
 
 <svelte:window
 	on:keydown={(event) => {
-        console.log("keydown", ascii, pointer)
 		on_key_down(event);
 	}}
     on:keyup={(event) => {
@@ -76,11 +72,11 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <main style="--bg: {backgroundColor}; --color: {color}; --zoom: {zoom}; position: fixed">
-    <Menu bind:backgroundColor bind:color bind:zoom />
+    <Menu bind:color bind:backgroundColor bind:zoom />
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="canvas" on:mousedown={handleCanvasClick} on:wheel={handleCanvasScroll}>
     {#each $ascii as a}
-        <AsciiRow bind:x={a.x} bind:y={a.y} id={a.id} text={a.text} zoom={zoom}/>
+        <AsciiRow bind:a />
     {/each}
   </div>
 </main>

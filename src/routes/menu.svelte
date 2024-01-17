@@ -1,7 +1,10 @@
 <script>
     import { pointer } from "$lib/stores.js";
-    export let backgroundColor;
+    
+    /** @type {string} */
     export let color;
+    /** @type {string} */
+    export let backgroundColor;
     
     /** @type {number}*/
     export let zoom;
@@ -10,9 +13,11 @@
 <div class = "menu">
     <h1>ASCII SANDBOX</h1>
     <div>
-        <button on:click={() => zoom += .1}>+</button>
-        <button on:click={() => zoom -= .1}>-</button>
+        <!-- <button on:click={() => zoom += .1}>+</button>
+        <button on:click={() => zoom -= .1}>-</button> -->
         <button on:click={() => {pointer.set(-1)}}>Deselect </button>
+        <input type="color" bind:value={color} />
+        <input type="color" bind:value={backgroundColor} />
     </div>
 </div>
 

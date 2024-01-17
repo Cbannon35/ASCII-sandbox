@@ -1,24 +1,63 @@
 import { ascii, pointer } from '$lib/stores.js';
+import figlet from 'figlet';
 
 /**@type {number} */
 let $pointer;
 pointer.subscribe((val) => {
 	$pointer = val;
 });
+/**@type {Ascii_obj[]} */
+let $ascii;
+ascii.subscribe((val) => {
+	$ascii = val;
+});
 
 /**@type {any}*/
 const keysPressed = {};
+
+/**
+ * Calls figlet to generate the ascii text.
+ * @param {string} text - The text to be converted to ascii.
+ * @param {import("figlet").Fonts} font - The font to use for the conversion.
+ * @returns {Promise<string>} - The ascii text.
+ */
+export async function generate_ascii(text, font) {
+	let d = '';
+	return d;
+}
 
 /**
  * Handles a general key press. Adds what the user types to the current text object.
  * @param {string} key - The key that was pressed
  * @returns nothing
  */
-function handleKey(key) {
-	ascii.update((ascii) => {
-		ascii[$pointer].text += key;
-		return ascii;
-	});
+async function handleKey(key) {
+	let curr_ascii_obj = $ascii[$pointer];
+	figlet.text(
+		key,
+		{
+			font: curr_ascii_obj.font
+		},
+		function (err, data) {
+			if (err) {
+				console.log('Something went wrong...');
+				console.dir(err);
+				return;
+			}
+			let new_ascii_char = {
+				font: curr_ascii_obj.font,
+				color: curr_ascii_obj.color,
+				bg_color: curr_ascii_obj.bg_color,
+				text: key,
+				ascii: data
+			};
+
+			ascii.update((ascii) => {
+				ascii[$pointer].asciis[curr_ascii_obj.pointer].push(new_ascii_char);
+				return ascii;
+			});
+		}
+	);
 }
 
 /**
@@ -27,9 +66,18 @@ function handleKey(key) {
  */
 function handleBackspace() {
 	ascii.update((ascii) => {
-		if (ascii[$pointer].text.length > 0) {
-			ascii[$pointer].text = ascii[$pointer].text.slice(0, -1);
+		let curr_ascii_obj = ascii[$pointer];
+		let curr_text_obj = curr_ascii_obj.asciis[curr_ascii_obj.pointer];
+		if (curr_text_obj.length == 0) {
+			// Edgecase: no characters at all
+			if (curr_ascii_obj.pointer == 0) {
+				return ascii;
+			}
+			// If the current text object is empty, remove it from the ascii object
+			curr_ascii_obj.asciis.pop();
+			curr_ascii_obj.pointer -= 1;
 		}
+		curr_text_obj.pop();
 		return ascii;
 	});
 }
@@ -39,7 +87,9 @@ function handleBackspace() {
  */
 function handleEnter() {
 	ascii.update((ascii) => {
-		ascii[$pointer].text += '\n';
+		let curr_ascii_obj = ascii[$pointer];
+		curr_ascii_obj.asciis.push([]);
+		curr_ascii_obj.pointer += 1;
 		return ascii;
 	});
 }
@@ -77,28 +127,8 @@ function moveCanvas() {
  * Moves the selected element.
  * @returns nothing
  */
-function moveAscii() {
-	let dx = 0;
-	let dy = 0;
-
-	if (keysPressed['ArrowLeft']) {
-		dx = -1;
-	}
-	if (keysPressed['ArrowRight']) {
-		dx = 1;
-	}
-	if (keysPressed['ArrowUp']) {
-		dy = -1;
-	}
-	if (keysPressed['ArrowDown']) {
-		dy = 1;
-	}
-
-	ascii.update((ascii) => {
-		ascii[$pointer].x += dx;
-		ascii[$pointer].y += dy;
-		return ascii;
-	});
+function moveCursor() {
+	/*TODO*/
 }
 /**
  * Handles the keydown event
@@ -130,7 +160,7 @@ export function on_key_down(event) {
 		if ($pointer < 0) {
 			moveCanvas();
 		} else {
-			moveAscii();
+			moveCursor();
 		}
 	} else if (key === 'Backspace') {
 		handleBackspace();
